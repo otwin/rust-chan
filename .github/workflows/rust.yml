@@ -15,7 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+#        target: [i686-pc-windows-msvc, x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+        target: [i686-pc-windows-msvc]
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -25,15 +26,11 @@ jobs:
           echo "release_tag=$(date +"%Y.%m.%d-%H%M%S")" >> $GITHUB_OUTPUT
           touch release.txt
           echo "status=success" >> $GITHUB_OUTPUT
-      - name: Compile
-        run: |
-          rustup target add  i686-pc-windows-msvc
-          cargo build --release --target i686-pc-windows-msvc
         
-#      - name: Compile and release
-#        uses: rust-build/rust-build.action@v1.4.5
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          RUSTTARGET: ${{ matrix.target }}
-#          EXTRA_FILES: "README.md LICENSE"
+      - name: Compile and release
+        uses: rust-build/rust-build.action@v1.4.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          RUSTTARGET: ${{ matrix.target }}
+          EXTRA_FILES: "README.md LICENSE"
