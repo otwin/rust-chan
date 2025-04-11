@@ -8,8 +8,14 @@ env:
 
 jobs:
   build:
-    name: Build and Release
+    name: Build  ${{ matrix.target }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+#        target: [i686-pc-windows-msvc, x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+#        target: [i686-pc-windows-msvc]
+        target: [x86_64-pc-windows-gnu]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,8 +27,12 @@ jobs:
           profile: minimal
           override: true
 
-      - name: Build release binary
-        run: cargo build --release --target x86_64-pc-windows-gnu
+      - name: Compile and release
+        uses: rust-build/rust-build.action@v1.4.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          RUSTTARGET: ${{ matrix.target }}
 
       - name: Get current date
         id: date
